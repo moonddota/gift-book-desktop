@@ -1,0 +1,77 @@
+@import './base.css';
+@import 'tailwindcss';
+
+/* 1. 定义层顺序（从低到高） */
+@layer antd ,reset, third-party, base, components, utilities;
+
+/* 2. 导入 Tailwind 到 utilities 层 */
+
+/* 3. 自定义 dark 变体 */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* 4. base 层：字体和 CSS 变量 */
+@layer base {
+  :root {
+    --color-layout-bg: #fff;
+    --color-text: black;
+    --color-button-icon: rgb(124, 77, 255);
+    --color-bg-tipe: rgb(235, 235, 235);
+    --color-title-text: #dc2626;
+  }
+
+  [data-theme='dark'] {
+    --color-layout-bg: #000;
+    --color-text: white;
+    --color-button-icon: white;
+    --color-bg-tipe: rgba(255, 255, 255, 0.1);
+    --color-title-text: #d1dae9;
+  }
+}
+
+/* 5. components 层：自定义组件样式 */
+@layer components {
+  .my_coin_header_itme {
+    @apply text-[16px] font-[600] text-center text-[rgb(60,95,123)];
+  }
+
+  .my_pagination {
+    @apply [&>div]:text-[black] [&>div]:bg-transparent [&>a]:text-[black] [&>a]:bg-transparent [&>svg]:text-[black] [&>li]:text-[black] [&>li]:bg-transparent [&>input]:text-[black] [&>input]:bg-transparent;
+  }
+}
+
+/* 6. 主题变量（全局） */
+@theme {
+  --color-bg-primary: #ffffff;
+  --color-bg-primary-dark: rgb(17, 25, 54);
+  --color-bg-container: rgb(238, 242, 246);
+  --color-bg-container-dark: rgb(26, 34, 63);
+  --color-text-primary: #121926;
+  --color-text-primary-dark: #ffffff;
+  --animate-spin-slow: spin 1.5s linear infinite;
+  --animate-spin-reverse: spin 1s linear infinite reverse;
+}
+
+/* ========== 7. @utility 必须放在顶层！ ========== */
+
+@utility color-transition {
+  @apply transition-colors! duration-200! ease-in-out! delay-0!;
+}
+
+@utility btn-icon {
+  @apply w-[34px]! h-[34px]! text-[16px]! flex! items-center! justify-center! rounded-[8px]! color-transition! select-none! cursor-pointer!;
+  @apply bg-[rgb(237,231,246)]! text-[rgb(94,53,177)]!;
+  @apply hover:bg-[rgb(94,53,177)]! hover:text-[rgb(237,231,246)]!;
+  @apply dark:bg-[rgb(41,49,79)]! dark:text-[white]!;
+}
+
+@utility bg-primary {
+  @apply bg-bg-primary! dark:bg-bg-primary-dark!;
+}
+
+@utility bg-container {
+  @apply bg-bg-container! dark:bg-bg-container-dark!;
+}
+
+@utility text-primary {
+  @apply text-text-primary! dark:text-text-primary-dark!;
+}
