@@ -13,7 +13,15 @@ export default defineConfig({
       terserOptions: undefined
     }
   },
-  preload: {},
+  preload: {
+    build: {
+      rollupOptions: {
+        output: {
+          inlineDynamicImports: true
+        }
+      }
+    }
+  },
   renderer: {
     resolve: {
       alias: {
