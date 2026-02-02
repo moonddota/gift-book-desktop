@@ -452,6 +452,7 @@ const HomePage = (): React.JSX.Element => {
                 onRecordClick={setEditingRecord}
                 eventName={eventData.name}
                 setStatisticsModalOpen={setStatisticsModalOpen}
+                isSolemn={eventData.isSolemn}
               />
             </Card>
           </Col>

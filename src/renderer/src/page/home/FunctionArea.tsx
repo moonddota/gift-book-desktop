@@ -1,6 +1,6 @@
 import { CloseOutlined } from '@ant-design/icons'
 import { antdUtils } from '@renderer/utils/antd'
-import { loadOriginalPDFScripts } from '@renderer/utils/loadOriginalPDFScripts'
+import { GiftRegistryPDF } from '@renderer/utils/GiftRegistryPDF'
 import { Button, Flex, Input, Modal, Space, Switch, Table, Typography } from 'antd'
 import dayjs from 'dayjs'
 import { RecordItem } from 'src/sharedTypes'
@@ -14,6 +14,7 @@ interface FunctionAreaProps {
   onRecordClick?: (record: RecordItem) => void
   eventName: string
   setStatisticsModalOpen: (value: boolean) => void
+  isSolemn: boolean
 }
 
 export const FunctionArea = (props: FunctionAreaProps): React.JSX.Element => {
@@ -51,86 +52,120 @@ export const FunctionArea = (props: FunctionAreaProps): React.JSX.Element => {
     index % 2 === 0
       ? 'bg-red-50! dark:bg-gray-50! dark:text-gray-900!'
       : 'bg-red-100! dark:bg-gray-100! dark:text-gray-900!'
+  // const handleSaveAsPDF = async (): Promise<void> => {
+  //   try {
+  //     await loadOriginalPDFScripts()
+
+  //     //预加载所有资源为 Uint8Array
+  //     const toUint8Array = async (url: string): Promise<Uint8Array> => {
+  //       const res = await fetch(url)
+  //       if (!res.ok) throw new Error(`加载失败: ${url}`)
+  //       return new Uint8Array(await res.arrayBuffer())
+  //     }
+
+  //     // 可选图片：如果加载失败就传 null
+  //     const toOptionalImage = async (url?: string): Promise<Uint8Array | null> => {
+  //       if (!url) return null
+  //       try {
+  //         return await toUint8Array(url)
+  //       } catch (err) {
+  //         console.warn('图片加载失败（将不显示）:', url)
+  //         return null
+  //       }
+  //     }
+
+  //     // 并行加载
+  //     const [
+  //       mainFontBytes,
+  //       giftLabelFontBytes,
+  //       formalFontBytes,
+  //       coverImageBytes,
+  //       backCoverImageBytes,
+  //       bgImageBytes
+  //     ] = await Promise.all([
+  //       toUint8Array('/static/MaShanZheng-Regular.ttf'),
+  //       toUint8Array('/static/SourceHanSerifCN-Heavy.ttf'),
+  //       toUint8Array('/static/NotoSansSCMedium-mini.ttf'),
+  //       toOptionalImage('/static/cover1.jpg'),
+  //       toOptionalImage('/static/bg.jpg'), // 封底图（必须 JPG/PNG）
+  //       toOptionalImage('/static/bg.jpg') // 背景图（必须 JPG/PNG，不能 WebP！）
+  //     ])
+
+  //     const GiftRegistryPDF = (window as any).GiftRegistryPDF
+  //     if (!GiftRegistryPDF) throw new Error('PDF 生成器未加载')
+
+  //     // 把字节数据直接放进 options（不再传 URL）
+  //     const options = {
+  //       title: '礼金簿',
+  //       giftLabel: '贺礼',
+  //       // 字体和图片全部传字节
+  //       mainFontBytes,
+  //       giftLabelFontBytes,
+  //       formalFontBytes,
+  //       coverImageBytes,
+  //       backCoverImageBytes,
+  //       bgImageBytes,
+  //       itemsPerPage: 12,
+  //       printCover: true,
+  //       printSummary: true,
+  //       printAppendix: true,
+  //       showCoverTitle: true,
+  //       subtitle: new Date().toLocaleDateString('zh-CN'),
+  //       recorder: '电子礼簿系统'
+  //     }
+
+  //     const generator = new GiftRegistryPDF(options)
+
+  //     // 直接传原始 records（不要 cleanedRecords！）
+  //     const uint8Array = await generator.generate(records, null, eventName)
+
+  //     // 下载
+  //     const blob = new Blob([uint8Array.buffer], { type: 'application/pdf' })
+  //     const url = URL.createObjectURL(blob)
+  //     const a = document.createElement('a')
+  //     a.href = url
+  //     a.download = `礼金簿_${eventName}_(导出时间${dayjs(new Date()).format('YYYY:MM:DD--HH:mm:ss')}).pdf`
+  //     a.click()
+  //     URL.revokeObjectURL(url)
+
+  //     antdUtils.message?.success('PDF 已下载')
+  //   } catch (err) {
+  //     console.error('PDF 生成失败:', err)
+  //     antdUtils.message?.error(`PDF 生成失败 ${err}`)
+  //   }
+  // }
+
   const handleSaveAsPDF = async (): Promise<void> => {
     try {
-      await loadOriginalPDFScripts()
-
-      //预加载所有资源为 Uint8Array
-      const toUint8Array = async (url: string): Promise<Uint8Array> => {
-        const res = await fetch(url)
-        if (!res.ok) throw new Error(`加载失败: ${url}`)
-        return new Uint8Array(await res.arrayBuffer())
-      }
-
-      // 可选图片：如果加载失败就传 null
-      const toOptionalImage = async (url?: string): Promise<Uint8Array | null> => {
-        if (!url) return null
-        try {
-          return await toUint8Array(url)
-        } catch (err) {
-          console.warn('图片加载失败（将不显示）:', url)
-          return null
-        }
-      }
-
-      // 并行加载
-      const [
-        mainFontBytes,
-        giftLabelFontBytes,
-        formalFontBytes,
-        coverImageBytes,
-        backCoverImageBytes,
-        bgImageBytes
-      ] = await Promise.all([
-        toUint8Array('/static/MaShanZheng-Regular.ttf'),
-        toUint8Array('/static/SourceHanSerifCN-Heavy.ttf'),
-        toUint8Array('/static/NotoSansSCMedium-mini.ttf'),
-        toOptionalImage('/static/cover1.jpg'),
-        toOptionalImage('/static/bg.jpg'), // 封底图（必须 JPG/PNG）
-        toOptionalImage('/static/bg.jpg') // 背景图（必须 JPG/PNG，不能 WebP！）
-      ])
-
-      const GiftRegistryPDF = (window as any).GiftRegistryPDF
-      if (!GiftRegistryPDF) throw new Error('PDF 生成器未加载')
-
-      // 把字节数据直接放进 options（不再传 URL）
       const options = {
         title: '礼金簿',
         giftLabel: '贺礼',
-        // 字体和图片全部传字节
-        mainFontBytes,
-        giftLabelFontBytes,
-        formalFontBytes,
-        coverImageBytes,
-        backCoverImageBytes,
-        bgImageBytes,
         itemsPerPage: 12,
         printCover: true,
         printSummary: true,
         printAppendix: true,
         showCoverTitle: true,
         subtitle: new Date().toLocaleDateString('zh-CN'),
-        recorder: '电子礼簿系统'
+        recorder: '电子礼簿系统',
+        isSolemn: props.isSolemn
       }
 
       const generator = new GiftRegistryPDF(options)
-
-      // 直接传原始 records（不要 cleanedRecords！）
-      const uint8Array = await generator.generate(records, null, eventName)
+      const uint8Array = await generator.generate(records) // 只传 records
 
       // 下载
-      const blob = new Blob([uint8Array.buffer], { type: 'application/pdf' })
+      const blob = new Blob([new Uint8Array(uint8Array)], { type: 'application/pdf' })
+
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
       a.download = `礼金簿_${eventName}_(导出时间${dayjs(new Date()).format('YYYY:MM:DD--HH:mm:ss')}).pdf`
       a.click()
       URL.revokeObjectURL(url)
-
       antdUtils.message?.success('PDF 已下载')
     } catch (err) {
       console.error('PDF 生成失败:', err)
-      antdUtils.message?.error('PDF 生成失败')
+      antdUtils.message?.error(`PDF 生成失败: ${err instanceof Error ? err.message : String(err)}`)
     }
   }
 
